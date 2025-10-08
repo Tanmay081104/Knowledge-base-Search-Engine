@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 CRAZY Knowledge Base Search Engine 🤖</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        :root {
+            --neon-blue: #00f5ff;
+            --neon-pink: #ff006e;
+            --neon-green: #39ff14;
+            --neon-yellow: #ffff00;
+            --dark-bg: #0a0a0a;
+            --gradient-1: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff);
+            --gradient-2: linear-gradient(135deg, #00f5ff, #39ff14, #ffff00);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* CRAZY ANIMATED BACKGROUND */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--dark-bg);
+            overflow: hidden;
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-1);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient-2);
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+        
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            background: var(--neon-green);
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(20px) rotate(240deg); }
+        }
+        
+        /* HEADER WITH CRAZY EFFECTS */
+        .header {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: var(--gradient-1);
+            background-size: 400% 400%;
+            animation: gradientShift 4s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.03) 10px,
+                rgba(255, 255, 255, 0.03) 20px
+            );
+            animation: headerPattern 20s linear infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes headerPattern {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .title {
+            font-size: 3rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px var(--neon-blue);
+            position: relative;
+            z-index: 2;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 20px var(--neon-blue); }
+            to { text-shadow: 0 0 40px var(--neon-pink), 0 0 60px var(--neon-pink); }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 2;
+            opacity: 0.9;
+        }
+        
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* CRAZY CARDS */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .card:hover::before {
+            left: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+        }
+        
+        /* FILE UPLOAD SECTION */
+        .upload-section {
+            text-align: center;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-input-label {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--gradient-2);
+            color: var(--dark-bg);
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .file-input-label:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(57, 255, 20, 0.4);
+        }
+        
+        /* QUERY SECTION */
+        .query-section {
+            margin-top: 2rem;
+        }
+        
+        .query-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', monospace;
+            transition: all 0.3s ease;
+        }
+        
+        .query-input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+        
+        .query-button {
+            width: 100%;
+            padding: 1rem 2rem;
+            margin-top: 1rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.2rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .query-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 25px rgba(255, 0, 110, 0.4);
+        }
+        
+        .query-button:active {
+            transform: scale(0.98);
+        }
+        
+        /* RESULTS SECTION */
+        .results-section {
+            margin-top: 2rem;
+        }
+        
+        .answer {
+            background: rgba(57, 255, 20, 0.1);
+            border-left: 4px solid var(--neon-green);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: answerSlide 0.5s ease-out;
+        }
+        
+        @keyframes answerSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .sources {
+            margin-top: 1rem;
+        }
+        
+        .source-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .source-item:hover {
+            border-color: var(--neon-yellow);
+            background: rgba(255, 255, 0, 0.1);
+        }
+        
+        /* CRAZY STATS SECTION */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: var(--gradient-2);
+            color: var(--dark-bg);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            transform: perspective(1000px) rotateY(0deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: perspective(1000px) rotateY(10deg) rotateX(5deg);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* LOADING ANIMATION */
+        .loading {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--neon-blue);
+            animation: spin 1s ease-in-out infinite;
+            margin: 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* NOTIFICATIONS */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--gradient-1);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- CRAZY BACKGROUND ANIMATION -->
+    <div class="background-animation">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1 class="title">🚀 CRAZY Knowledge Base 🤖</h1>
+        <p class="subtitle">The most INSANE RAG system with AI superpowers! ✨</p>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <!-- STATS SECTION -->
+        <div class="card">
+            <h2 style="text-align: center; margin-bottom: 2rem;">📊 CRAZY STATS</h2>
+            <div class="stats-grid" id="statsGrid">
+                <!-- Stats will be loaded here -->
+            </div>
+        </div>
+
+        <!-- UPLOAD SECTION -->
+        <div class="card upload-section">
+            <h2>📁 Upload CRAZY Documents</h2>
+            <p style="margin: 1rem 0;">Upload PDFs, text files, or markdown documents to expand the knowledge base!</p>
+            
+            <div class="file-input-wrapper">
+                <input type="file" id="fileInput" class="file-input" accept=".pdf,.txt,.md" multiple>
+                <label for="fileInput" class="file-input-label">
+                    🚀 Choose Files to Upload
+                </label>
+            </div>
+            
+            <div id="uploadStatus" style="margin-top: 1rem;"></div>
+        </div>
+
+        <!-- QUERY SECTION -->
+        <div class="card query-section">
+            <h2>🤖 Ask CRAZY Questions</h2>
+            <p style="margin: 1rem 0;">Ask anything about your uploaded documents and get AI-powered answers!</p>
+            
+            <textarea 
+                id="queryInput" 
+                class="query-input" 
+                placeholder="Ask me something CRAZY... like 'What are the main concepts in machine learning?' 🧠✨"
+                rows="3"
+            ></textarea>
+            
+            <button id="queryButton" class="query-button">
+                🔍 Ask the AI
+            </button>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div class="card results-section" id="resultsSection" style="display: none;">
+            <h2>🎯 CRAZY AI Answer</h2>
+            <div id="answerContent"></div>
+            <div id="sourcesContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // 🚀 CRAZY JAVASCRIPT ENGINE
+        let isQuerying = false;
+        
+        // Load initial stats
+        loadStats();
+        
+        // File upload handler
+        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+        
+        // Query handler
+        document.getElementById('queryButton').addEventListener('click', handleQuery);
+        document.getElementById('queryInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                handleQuery();
+            }
+        });
+        
+        async function loadStats() {
+            try {
+                const response = await fetch('/analytics');
+                const data = await response.json();
+                
+                const statsGrid = document.getElementById('statsGrid');
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <span class="stat-number">${data.overview.total_documents}</span>
+                        <span class="stat-label">📚 Documents</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">${data.overview.total_chunks}</span>
+                        <span class="stat-label">🧩 Knowledge Chunks</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">${data.crazy_metrics.mind_blown_count}</span>
+                        <span class="stat-label">🤯 Minds Blown</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">${data.crazy_metrics.eureka_moments}</span>
+                        <span class="stat-label">💡 Eureka Moments</span>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        async function handleFileUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            
+            const statusDiv = document.getElementById('uploadStatus');
+            statusDiv.innerHTML = '<div class="loading"></div><p>🚀 Processing files with CRAZY efficiency...</p>';
+            
+            for (const file of files) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(`✅ ${file.name} uploaded successfully!`);
+                        statusDiv.innerHTML += `<p style="color: #39ff14;">✅ ${file.name}: ${result.chunks_created} chunks created!</p>`;
+                    } else {
+                        throw new Error(result.message || 'Upload failed');
+                    }
+                } catch (error) {
+                    statusDiv.innerHTML += `<p style="color: #ff006e;">❌ ${file.name}: ${error.message}</p>`;
+                }
+            }
+            
+            // Reload stats after upload
+            setTimeout(loadStats, 1000);
+        }
+        
+        async function handleQuery() {
+            if (isQuerying) return;
+            
+            const queryInput = document.getElementById('queryInput');
+            const question = queryInput.value.trim();
+            
+            if (!question) {
+                showNotification('🤔 Please enter a question first!');
+                return;
+            }
+            
+            isQuerying = true;
+            const queryButton = document.getElementById('queryButton');
+            const originalText = queryButton.innerHTML;
+            
+            queryButton.innerHTML = '<div class="loading"></div> AI is thinking CRAZY thoughts...';
+            queryButton.disabled = true;
+            
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        question: question,
+                        max_results: 5,
+                        include_sources: true
+                    })
+                });
+                
+                const result = await response.json();
+                
+                displayResults(result);
+                showNotification('🤖 AI has spoken with CRAZY wisdom!');
+                
+            } catch (error) {
+                showNotification('❌ Error processing query: ' + error.message);
+            } finally {
+                isQuerying = false;
+                queryButton.innerHTML = originalText;
+                queryButton.disabled = false;
+            }
+        }
+        
+        function displayResults(result) {
+            const resultsSection = document.getElementById('resultsSection');
+            const answerContent = document.getElementById('answerContent');
+            const sourcesContent = document.getElementById('sourcesContent');
+            
+            if (result.success) {
+                answerContent.innerHTML = `
+                    <div class="answer">
+                        <h3>🤖 AI Answer:</h3>
+                        <p>${result.answer}</p>
+                        ${result.mood ? `<p style="margin-top: 1rem; opacity: 0.8;"><strong>Mood:</strong> ${result.mood}</p>` : ''}
+                        ${result.crazy_factor ? `<p style="opacity: 0.8;"><strong>Crazy Factor:</strong> ${result.crazy_factor.toFixed(1)}% 🔥</p>` : ''}
+                        <p style="opacity: 0.6; font-size: 0.9rem; margin-top: 1rem;">
+                            ⚡ Processed in ${result.processing_time.toFixed(2)} seconds
+                        </p>
+                    </div>
+                `;
+                
+                if (result.sources && result.sources.length > 0) {
+                    sourcesContent.innerHTML = `
+                        <h3>📚 Sources:</h3>
+                        <div class="sources">
+                            ${result.sources.map(source => `
+                                <div class="source-item">
+                                    <p><strong>📄 ${source.filename}</strong></p>
+                                    <p style="opacity: 0.8; margin-top: 0.5rem;">${source.content}</p>
+                                    <p style="opacity: 0.6; font-size: 0.8rem; margin-top: 0.5rem;">
+                                        🎯 Similarity: ${(source.similarity_score * 100).toFixed(1)}%
+                                    </p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    sourcesContent.innerHTML = '<p style="opacity: 0.6;">No sources found.</p>';
+                }
+            } else {
+                answerContent.innerHTML = `
+                    <div class="answer" style="border-left-color: #ff006e; background: rgba(255, 0, 110, 0.1);">
+                        <h3>❌ Error:</h3>
+                        <p>${result.answer || 'Something went wrong!'}</p>
+                    </div>
+                `;
+                sourcesContent.innerHTML = '';
+            }
+            
+            resultsSection.style.display = 'block';
+        }
+        
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+        
+        // Add some CRAZY interactive effects
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.shape');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.5;
+                shape.style.transform += ` translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+        
+        // CRAZY welcome message
+        setTimeout(() => {
+            showNotification('🎉 Welcome to the CRAZIEST Knowledge Base! Upload documents and start asking INSANE questions! 🚀');
+        }, 1000);
+    </script>
+</body>
+</html>

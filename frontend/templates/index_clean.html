@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base Search Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: #ffffff;
+            border-bottom: 2px solid #dee2e6;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #495057;
+            text-align: center;
+        }
+        
+        .header p {
+            text-align: center;
+            color: #6c757d;
+            margin-top: 8px;
+        }
+        
+        .card {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        
+        .file-input {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+        }
+        
+        .file-input-label {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .file-input-label:hover {
+            background: #0056b3;
+        }
+        
+        .upload-status {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        
+        .upload-status.success {
+            background: #d1edff;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .upload-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .query-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .query-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+        
+        .query-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: background-color 0.2s;
+        }
+        
+        .query-button:hover {
+            background: #218838;
+        }
+        
+        .query-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .results-section {
+            margin-top: 20px;
+        }
+        
+        .answer {
+            background: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-left: 4px solid #007bff;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .answer.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            border-left-color: #dc3545;
+        }
+        
+        .answer h3 {
+            margin-bottom: 12px;
+            color: #495057;
+        }
+        
+        .sources {
+            margin-top: 20px;
+        }
+        
+        .source-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+        
+        .source-item strong {
+            color: #495057;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-demo {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-active {
+            background: #d1edff;
+            color: #0c5460;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <h1>Knowledge Base Search Engine</h1>
+            <p>Advanced document search and question answering system</p>
+            <div class="status-indicator status-demo" id="systemStatus">
+                Demo Mode - Upload documents and ask questions
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Statistics Section -->
+        <div class="card">
+            <h2>System Statistics</h2>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <span class="stat-number" id="docCount">0</span>
+                    <div class="stat-label">Documents</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="chunkCount">0</span>
+                    <div class="stat-label">Knowledge Chunks</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="dbSize">0 MB</span>
+                    <div class="stat-label">Database Size</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Upload Section -->
+        <div class="card">
+            <h2>Upload Documents</h2>
+            <p>Upload PDF, text files, or markdown documents to expand the knowledge base.</p>
+            
+            <div class="file-input-wrapper">
+                <input type="file" id="fileInput" class="file-input" accept=".pdf,.txt,.md,.docx,.json" multiple>
+                <label for="fileInput" class="file-input-label">
+                    Choose Files
+                </label>
+            </div>
+            
+            <div id="uploadStatus"></div>
+        </div>
+
+        <!-- Query Section -->
+        <div class="card">
+            <h2>Ask Questions</h2>
+            <p>Ask questions about your uploaded documents and get detailed answers.</p>
+            
+            <textarea 
+                id="queryInput" 
+                class="query-input" 
+                placeholder="Enter your question here... (e.g., 'What are the main concepts in this document?')"
+            ></textarea>
+            
+            <button id="queryButton" class="query-button">
+                Submit Query
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <div class="card results-section" id="resultsSection" style="display: none;">
+            <h2>Results</h2>
+            <div id="answerContent"></div>
+            <div id="sourcesContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let isQuerying = false;
+        
+        // Load initial stats
+        loadStats();
+        
+        // File upload handler
+        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+        
+        // Query handler
+        document.getElementById('queryButton').addEventListener('click', handleQuery);
+        document.getElementById('queryInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                handleQuery();
+            }
+        });
+        
+        async function loadStats() {
+            try {
+                const response = await fetch('/analytics');
+                const data = await response.json();
+                
+                document.getElementById('docCount').textContent = data.overview.total_documents || 0;
+                document.getElementById('chunkCount').textContent = data.overview.total_chunks || 0;
+                document.getElementById('dbSize').textContent = data.overview.database_size || '0 MB';
+                
+                // Update status indicator
+                const statusEl = document.getElementById('systemStatus');
+                if (data.overview.total_documents > 0) {
+                    statusEl.className = 'status-indicator status-active';
+                    statusEl.textContent = `Active - ${data.overview.total_documents} documents loaded`;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        async function handleFileUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            
+            const statusDiv = document.getElementById('uploadStatus');
+            statusDiv.innerHTML = '<div class="loading"></div>Processing files...';
+            statusDiv.className = 'upload-status';
+            
+            let successCount = 0;
+            let errorCount = 0;
+            let results = [];
+            
+            for (const file of files) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok && result.success) {
+                        successCount++;
+                        results.push(`✓ ${file.name}: ${result.chunks_created || 0} chunks created`);
+                    } else {
+                        errorCount++;
+                        results.push(`✗ ${file.name}: ${result.message || 'Upload failed'}`);
+                    }
+                } catch (error) {
+                    errorCount++;
+                    results.push(`✗ ${file.name}: ${error.message}`);
+                }
+            }
+            
+            // Show results
+            const resultHtml = results.join('<br>');
+            if (errorCount === 0) {
+                statusDiv.innerHTML = resultHtml;
+                statusDiv.className = 'upload-status success';
+                showNotification(`Successfully uploaded ${successCount} file(s)`);
+            } else {
+                statusDiv.innerHTML = resultHtml;
+                statusDiv.className = 'upload-status error';
+            }
+            
+            // Reload stats after upload
+            setTimeout(loadStats, 1000);
+            
+            // Clear file input
+            event.target.value = '';
+        }
+        
+        async function handleQuery() {
+            if (isQuerying) return;
+            
+            const queryInput = document.getElementById('queryInput');
+            const question = queryInput.value.trim();
+            
+            if (!question) {
+                showNotification('Please enter a question first');
+                return;
+            }
+            
+            isQuerying = true;
+            const queryButton = document.getElementById('queryButton');
+            const originalText = queryButton.innerHTML;
+            
+            queryButton.innerHTML = '<div class="loading"></div>Processing...';
+            queryButton.disabled = true;
+            
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        question: question,
+                        max_results: 5,
+                        include_sources: true
+                    })
+                });
+                
+                const result = await response.json();
+                displayResults(result);
+                
+                if (result.success) {
+                    showNotification('Query completed successfully');
+                }
+                
+            } catch (error) {
+                displayResults({
+                    success: false,
+                    answer: 'Error processing query: ' + error.message,
+                    sources: []
+                });
+                showNotification('Error processing query');
+            } finally {
+                isQuerying = false;
+                queryButton.innerHTML = originalText;
+                queryButton.disabled = false;
+            }
+        }
+        
+        function displayResults(result) {
+            const resultsSection = document.getElementById('resultsSection');
+            const answerContent = document.getElementById('answerContent');
+            const sourcesContent = document.getElementById('sourcesContent');
+            
+            if (result.success !== false) {  // Handle both true and undefined as success
+                answerContent.innerHTML = `
+                    <div class="answer">
+                        <h3>Answer</h3>
+                        <div style="white-space: pre-wrap;">${result.answer || 'No answer provided'}</div>
+                        ${result.processing_time ? `<p style="margin-top: 16px; font-size: 0.875rem; color: #6c757d;">Processed in ${result.processing_time.toFixed(2)} seconds</p>` : ''}
+                    </div>
+                `;
+                
+                if (result.sources && result.sources.length > 0) {
+                    sourcesContent.innerHTML = `
+                        <h3 style="margin-bottom: 16px;">Source Documents</h3>
+                        <div class="sources">
+                            ${result.sources.map(source => `
+                                <div class="source-item">
+                                    <div><strong>${source.filename}</strong></div>
+                                    <div style="margin-top: 8px; color: #6c757d;">${source.content}</div>
+                                    ${source.similarity_score ? `<div style="margin-top: 8px; font-size: 0.875rem; color: #6c757d;">Similarity: ${(source.similarity_score * 100).toFixed(1)}%</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    sourcesContent.innerHTML = '<p style="color: #6c757d;">No source documents found.</p>';
+                }
+            } else {
+                answerContent.innerHTML = `
+                    <div class="answer error">
+                        <h3>Error</h3>
+                        <div>${result.answer || result.error || 'An unknown error occurred'}</div>
+                    </div>
+                `;
+                sourcesContent.innerHTML = '';
+            }
+            
+            resultsSection.style.display = 'block';
+        }
+        
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Trigger animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Remove notification
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Show welcome message
+        setTimeout(() => {
+            showNotification('Welcome to the Knowledge Base Search Engine');
+        }, 500);
+    </script>
+</body>
+</html>
