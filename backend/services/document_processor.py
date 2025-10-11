@@ -24,7 +24,7 @@ class DocumentProcessor:
     def __init__(self):
         self.chunk_size = settings.chunk_size
         self.chunk_overlap = settings.chunk_overlap
-        self.allowed_extensions = settings.allowed_extensions
+        self.allowed_extensions = settings.get_allowed_extensions()
     
     async def process_uploaded_file(self, file_path: str, original_filename: str) -> Dict[str, Any]:
         """

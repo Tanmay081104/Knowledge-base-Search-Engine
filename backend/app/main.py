@@ -159,18 +159,18 @@ async def upload_document(
             tmp_file.write(content)
             tmp_file_path = tmp_file.name
         
-                document_data = await document_processor.process_uploaded_file(
+        document_data = await document_processor.process_uploaded_file(
             tmp_file_path, 
             file.filename
         )
         
-                background_tasks.add_task(
+        background_tasks.add_task(
             add_to_knowledge_base_background,
             document_data,
             tmp_file_path
         )
         
-                await manager.broadcast(f"🎉 New document uploaded: {file.filename}! Knowledge level INCREASED! 📈")
+        await manager.broadcast(f"🎉 New document uploaded: {file.filename}! Knowledge level INCREASED! 📈")
         
         return DocumentUploadResponse(
             success=True,
@@ -512,7 +512,17 @@ async def get_documents_for_graph_analysis():
         return []
 
 async def create_mock_knowledge_graph(stats):
-    """Create an enhanced mock knowledge graph when real analysis isn't available."""Professional implementation"""Get document data for art generation."""
+    """Create an enhanced mock knowledge graph when real analysis isn't available."""
+    # Mock data for demonstration
+    return {
+        "nodes": [],
+        "edges": [],
+        "total_nodes": 0,
+        "total_edges": 0
+    }
+
+async def get_document_for_art_generation(document_id: str):
+    """Get document data for art generation."""
     try:
         # Get document chunks from vector store
         vector_store = rag_service.vector_store

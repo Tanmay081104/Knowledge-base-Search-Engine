@@ -8,6 +8,7 @@ from datetime import datetime
 import openai
 import anthropic
 import google.generativeai as genai
+from groq import Groq
 from loguru import logger
 
 from backend.app.config import settings
@@ -27,6 +28,7 @@ class RAGService:
         self.openai_client = None
         self.anthropic_client = None
         self.google_client = None
+        self.groq_client = None
         
         try:
             if settings.openai_api_key and settings.openai_api_key != "demo_key":
@@ -53,6 +55,15 @@ class RAGService:
                 logger.info("Google Gemini client not initialized (no API key)")
         except Exception as e:
             logger.warning(f"Failed to initialize Google Gemini client: {str(e)}")
+        
+        try:
+            if settings.groq_api_key:
+                self.groq_client = Groq(api_key=settings.groq_api_key)
+                logger.info(f"Groq client initialized with model: {settings.groq_model}")
+            else:
+                logger.info("Groq client not initialized (no API key)")
+        except Exception as e:
+            logger.warning(f"Failed to initialize Groq client: {str(e)}")
     
     async def process_query(
         self,
@@ -164,6 +175,8 @@ class RAGService:
                 return await self._generate_anthropic_answer(prompt)
             elif llm_provider == "google" and self.google_client:
                 return await self._generate_google_answer(prompt)
+            elif llm_provider == "groq" and self.groq_client:
+                return await self._generate_groq_answer(prompt)
             else:
                 # No LLM available - use demo mode
                 return await self._generate_demo_answer(question, similar_chunks)
@@ -251,6 +264,25 @@ Answer:"""
             logger.error(f"Error generating Google Gemini answer: {str(e)}")
             raise
     
+    async def _generate_groq_answer(self, prompt: str) -> str:
+        """Generate answer using Groq API."""
+        try:
+            response = await asyncio.to_thread(
+                self.groq_client.chat.completions.create,
+                model=settings.groq_model,
+                messages=[
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=settings.max_tokens,
+                temperature=settings.temperature,
+            )
+            
+            return response.choices[0].message.content.strip()
+            
+        except Exception as e:
+            logger.error(f"Error generating Groq answer: {str(e)}")
+            raise
+    
     def _format_sources(self, similar_chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Format source information for response."""
         sources = []
@@ -292,6 +324,13 @@ Answer:"""
                 'status': 'available'
             })
         
+        if self.groq_client:
+            providers.append({
+                'provider': 'groq',
+                'model': settings.groq_model,
+                'status': 'available'
+            })
+        
         return providers
     
     async def test_llm_connection(self, provider: str) -> Dict[str, Any]:
@@ -323,6 +362,18 @@ Answer:"""
                     'provider': provider,
                     'status': 'success',
                     'response': response.content[0].text.strip()
+                }
+            elif provider == "groq" and self.groq_client:
+                response = self.groq_client.chat.completions.create(
+                    model=settings.groq_model,
+                    messages=[{"role": "user", "content": test_prompt}],
+                    max_tokens=50,
+                    temperature=0
+                )
+                return {
+                    'provider': provider,
+                    'status': 'success',
+                    'response': response.choices[0].message.content.strip()
                 }
             else:
                 return {
