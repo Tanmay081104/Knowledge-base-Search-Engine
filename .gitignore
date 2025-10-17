@@ -20,38 +20,61 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+out/
+.next/
 
-# Virtual Environment
+# Virtual Environment & Dependencies
 venv/
 env/
 ENV/
+node_modules/
 
-# Environment Variables
+# Environment Variables & Sensitive Files
 .env
 .env.local
 .env.production
+.env.development
+*.key
+*.pem
 
 # Database
 chroma_db/
 *.db
 *.sqlite
+*.sql
 
 # Logs
 *.log
 logs/
 
-# IDE
+# IDE & Editor Files
 .vscode/
 .idea/
 *.swp
 *.swo
+*.sublime-*
 
-# OS
+# OS Files
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Temporary files
+# Build Artifacts & Output
 *.tmp
 *.temp
 temp/
 tmp/
+*.cache
+.cache/
+
+# Media Files (for submission)
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.mkv
+
+# Documentation (assignment specific)
+*_22BCE8671_*.md
+DEPLOYMENT.md
+Technical_Approach*.md
