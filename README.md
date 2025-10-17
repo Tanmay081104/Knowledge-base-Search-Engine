@@ -110,3 +110,5 @@ Open your browser and navigate to `http://127.0.0.1:8000`
 - Python 3.8 or higher
 - At least one LLM API key (OpenAI, Google, Anthropic, or Groq)
 - Internet connection for API calls
+
+To view the demo watch : https://drive.google.com/file/d/1Fg09aAp3H9cXPeYZLJLryWVl-ck4w8-i/view?usp=sharing
