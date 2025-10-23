@@ -444,7 +444,24 @@ Answer:"""
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
-        return f"Error generating answer with Groq: {str(e)}"
+        # If API key is invalid or missing, provide demo response
+        error_str = str(e)
+        if "401" in error_str or "Invalid API Key" in error_str or "invalid_api_key" in error_str:
+            # Demo mode - extract and summarize from context
+            demo_answer = "📝 **DEMO MODE** (Add valid Groq API key to .env for full AI responses)\n\n"
+            demo_answer += "Based on the retrieved documents:\n\n"
+            
+            # Get first chunk content as summary
+            if context_chunks:
+                first_chunk = context_chunks[0]['content'][:400]
+                demo_answer += f"{first_chunk}..."
+                demo_answer += f"\n\n✅ **Search Success:** Found {len(context_chunks)} relevant document chunks\n"
+                demo_answer += f"📄 **Source:** {context_chunks[0]['filename']}\n\n"
+                demo_answer += "💡 **To get AI-powered synthesis:** Add your Groq API key to the .env file"
+            
+            return demo_answer
+        else:
+            return f"Error generating answer with Groq: {error_str}"
 
 # Routes
 @app.get("/", response_class=HTMLResponse)
